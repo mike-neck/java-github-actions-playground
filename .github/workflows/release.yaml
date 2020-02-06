@@ -29,5 +29,8 @@ jobs:
           restore-keys:
             ${{ runner.os }}-gradle-
   
+      - name: show env
+        run: env | sort
+  
       - name: show event
         run: cat $GITHUB_EVENT_PATH
