@@ -1,5 +1,6 @@
 plugins {
     id 'java-library'
+    id "com.github.breadmoirai.github-release" version "2.2.9"
 }
 
 ext {
@@ -23,3 +24,26 @@ dependencies {
 test {
     useJUnitPlatform()
 }
+
+
+githubRelease {
+    token {
+        System.getenv('GITHUB_TOKEN')
+    }
+    owner 'mike-neck'
+    repo project.name
+    tagName projectVersion
+    targetCommitish 'master'
+    releaseName projectVersion
+    releaseAssets {
+        tasks.jar.outputs.files.files
+    }
+    overwrite true
+    body changelog {
+        currentCommit 'HEAD'
+        lastCommit 'HEAD~10'
+        options(["--format=oneline", "--abbrev-commit", "--max-count=50", "graph"])
+    }
+}
+
+tasks.githubRelease.dependsOn(tasks.jar)
