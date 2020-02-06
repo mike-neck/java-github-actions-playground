@@ -2,6 +2,13 @@ plugins {
     id 'java-library'
 }
 
+ext {
+    projectVersion = project.hasProperty('project_version') ? "${project.property('project_version')}" : './get-git-version.sh'.execute().text
+}
+
+version = projectVersion
+group = 'org.mikeneck.example'
+
 repositories {
     mavenCentral()
 }
@@ -10,6 +17,7 @@ dependencies {
     implementation 'io.projectreactor:reactor-core:3.3.2.RELEASE'
     testImplementation 'io.projectreactor:reactor-test:3.3.2.RELEASE'
     testImplementation 'org.junit.jupiter:junit-jupiter:5.4.2'
+    testImplementation 'org.slf4j:slf4j-simple:1.7.30'
 }
 
 test {
