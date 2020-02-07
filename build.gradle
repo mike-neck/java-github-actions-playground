@@ -47,3 +47,9 @@ githubRelease {
 }
 
 tasks.githubRelease.dependsOn(tasks.jar)
+
+task revList(type: Exec) {
+    executable('git')
+    args 'rev-list', '--format=oneline', '--abbrev-commit', '--max-count=50', 'dd5fa78dc3239e761c2400c522e5bbb0d6b6817a..HEAD', '--'
+//    standardOutput(System.out)
+}
