@@ -41,8 +41,8 @@ githubRelease {
     overwrite true
     body changelog {
         currentCommit 'HEAD'
-        lastCommit 'HEAD~10'
-        options(["--format=oneline", "--abbrev-commit", "--max-count=50", "graph"])
+        lastCommit 'dd5fa78dc3239e761c2400c522e5bbb0d6b6817a'
+        options(["--format=oneline", "--abbrev-commit", "--max-count=50"])
     }
 }
 
