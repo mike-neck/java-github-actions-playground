@@ -29,7 +29,7 @@ jobs:
       - name: show github
         env:
           GHC: ${{ toJson(github) }}
-        run: echo $GHC
+        run: echo $GHC | jq -M
   baz:
     name: baz
     runs-on: ubuntu-latest
