@@ -34,14 +34,18 @@ jobs:
             ${{ runner.os }}-gradle-
 
       -
-        name: show tags
+        name: show github context
         env:
-          GITHUB_TOKEN : ${{ secrets.GITHUB_TOKEN }}
-        run: |
-          echo $GITHUB_TOKEN && \
-          curl -i https://api.github.com/repos/mike-neck/java-github-actions-playground/git/tags \
-              -H 'Authorization: Bearer $GITHUB_TOKEN' \
-              -H 'Accept: application/vnd.github.v3+json'
+          GITHUB_CONTEXT: ${{ toJson(github) }}
+        run: echo "$GITHUB_CONTEXT"
+      - name: show job context
+        env:
+          JOB_CONTEXT: ${{ toJson(job) }}
+        run: echo "$JOB_CONTEXT"
+      - name: show steps context
+        env:
+          STEPS_CONTEXT: ${{ toJson(steps) }}
+        run: echo "$STEPS_CONTEXT"
 
       -
         name: test
