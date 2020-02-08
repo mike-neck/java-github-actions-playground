@@ -1,0 +1,38 @@
+name: check-run on created and rerequested
+on:
+  check_run:
+    types:
+      - created
+      - rerequested
+
+jobs:
+  foo:
+    name: foo
+    runs-on: ubuntu-latest
+    steps:
+      - name: show foo
+        run: echo foo
+      - name: show job
+        env:
+          JOB: ${{ toJson(job) }}
+        run: echo $JOB
+  bar:
+    name: bar
+    runs-on: ubuntu-latest
+    steps:
+      - name: show bar
+        run: echo bar
+      - name: show github
+        env:
+          GHC: ${{ toJson(github) }}
+        run: echo $GHC
+  baz:
+    name: baz
+    runs-on: ubuntu-latest
+    steps:
+      - name: show baz
+        run: echo baz
+      - name: show job
+        env:
+          JOB_CTX: ${{ toJson(job) }}
+        run: echo $JOB_CTX
