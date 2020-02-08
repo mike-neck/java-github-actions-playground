@@ -49,7 +49,9 @@ jobs:
 
 
       - name: verify release
-        run: ORG_GRADLE_PROJECT_project_version=`git tag --list --sort=-creatordate | head -n 1` ./gradlew showVersion verifyRelease
+        run: ORG_GRADLE_PROJECT_project_version=`echo $EVENT_REF | tr '/' ' ' | awk '{print $3}'` ./gradlew showVersion verifyRelease
+        env:
+          EVENT_REF: ${{ github.ref }}
 
       - name: show env
         run: env | sort
@@ -58,7 +60,8 @@ jobs:
         run: cat $GITHUB_EVENT_PATH
 
       - name: release
-        run: ORG_GRADLE_PROJECT_project_version=`git tag --list --sort=-creatordate | head -n 1` ./gradlew assemble githubRelease
+        run: ORG_GRADLE_PROJECT_project_version=`echo $EVENT_REF | tr '/' ' ' | awk '{print $3}'` ./gradlew assemble githubRelease
         env:
+          EVENT_REF: ${{ github.ref }}
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
