@@ -29,6 +29,9 @@ jobs:
           restore-keys:
             ${{ runner.os }}-gradle-
 
+      - name: git tag
+        run: git tag --list
+
       - name: verify release
         run: ORG_GRADLE_PROJECT_project_version=`git tag --list | head -n 1` ./gradlew showVersion verifyRelease
 
