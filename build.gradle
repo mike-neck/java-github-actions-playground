@@ -4,7 +4,8 @@ plugins {
 }
 
 ext {
-    projectVersion = project.hasProperty('project_version') ? "${project.property('project_version')}" : './get-git-version.sh'.execute().text
+    projectVersion = project.hasProperty('project_version') ?
+            "${project.property('project_version')}".trim() : './get-git-version.sh'.execute().text.trim()
 }
 
 version = projectVersion
@@ -38,18 +39,25 @@ githubRelease {
     releaseAssets {
         tasks.jar.outputs.files.files
     }
-    overwrite true
-    body changelog {
-        currentCommit 'HEAD'
-        lastCommit 'dd5fa78dc3239e761c2400c522e5bbb0d6b6817a'
-        options(["--format=oneline", "--abbrev-commit", "--max-count=50"])
+    overwrite false
+    body {
+        file("release-notes/${projectVersion}.txt").text
     }
 }
 
 tasks.githubRelease.dependsOn(tasks.jar)
+tasks.githubRelease.group('release')
 
-task revList(type: Exec) {
-    executable('git')
-    args 'rev-list', '--format=oneline', '--abbrev-commit', '--max-count=50', 'dd5fa78dc3239e761c2400c522e5bbb0d6b6817a..HEAD', '--'
-//    standardOutput(System.out)
+task showVersion(group: 'release') {
+    doLast {
+        logger.lifecycle "projectVersion: $projectVersion"
+    }
+}
+
+task verifyRelease(group: 'release') {
+    doLast {
+        if(!file("release-notes/${projectVersion}.txt").exists()) {
+            throw new IllegalStateException("Release notes(release-notes/${projectVersion}.txt) is not existing. Please prepare release notes.")
+        }
+    }
 }

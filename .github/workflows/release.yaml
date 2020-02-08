@@ -28,20 +28,17 @@ jobs:
           key: ${{ runner.os }}-gradle-${{ hashFiles('build.gradle') }}
           restore-keys:
             ${{ runner.os }}-gradle-
-  
+
+      - name: verify release
+        run: ORG_GRADLE_PROJECT_project_version=`git tag --list | head -n 1` ./gradlew showVersion verifyRelease
+
       - name: show env
         run: env | sort
   
       - name: show event
         run: cat $GITHUB_EVENT_PATH
 
-      - name: git rev-list
-        run: git rev-list --format=oneline --abbrev-commit --max-count=50 dd5fa78dc3239e761c2400c522e5bbb0d6b6817a..HEAD --
-
-      - name: git rev-list by gradle
-        run: ./gradlew revList
-
       - name: release
-        run: ./gradlew assemble githubRelease
+        run: ORG_GRADLE_PROJECT_project_version=`git tag --list | head -n 1` ./gradlew assemble githubRelease
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
