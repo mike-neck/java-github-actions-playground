@@ -29,6 +29,9 @@ jobs:
           restore-keys:
             ${{ runner.os }}-gradle-
 
+      - name: fetch all tags
+        run: git fetch --depth=1 origin +refs/tags/*:refs/tags/*
+
       - name: git tag
         run: git tag --list
 
