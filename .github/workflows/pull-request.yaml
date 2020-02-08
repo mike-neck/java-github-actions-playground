@@ -1,0 +1,42 @@
+name: check-run on created and rerequested
+on:
+  pull_request:
+    types:
+      - opened
+      - closed
+      - edited
+      - synchronize
+      - ready_for-review
+      - review_requested
+
+jobs:
+  foo:
+    name: foo
+    runs-on: ubuntu-latest
+    steps:
+      - name: show foo
+        run: echo foo
+      - name: show env
+        env:
+          ENV_CTX: ${{ toJson(env) }}
+        run: echo $ENV_CTX
+  bar:
+    name: bar
+    runs-on: ubuntu-latest
+    steps:
+      - name: show bar
+        run: echo bar
+      - name: show github
+        env:
+          GHC: ${{ toJson(github) }}
+        run: echo $GHC
+  baz:
+    name: baz
+    runs-on: ubuntu-latest
+    steps:
+      - name: show baz
+        run: echo baz
+      - name: show job
+        env:
+          JOB_CTX: ${{ toJson(job) }}
+        run: echo $JOB_CTX
