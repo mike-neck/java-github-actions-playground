@@ -34,5 +34,14 @@ jobs:
             ${{ runner.os }}-gradle-
 
       -
+        name: show tags
+        env:
+          GITHUB_TOKEN : ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          curl -i https://api.github.com/repos/mike-neck/java-github-actions-playground/git/tags \
+              -H 'Authorization: Bearer $GITHUB_TOKEN' \
+              -H 'Accept: application/vnd.github.v3+json'
+
+      -
         name: test
         run: ./gradlew test    
