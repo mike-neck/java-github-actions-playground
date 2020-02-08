@@ -45,3 +45,4 @@ jobs:
         run: ORG_GRADLE_PROJECT_project_version=`git tag --list | head -n 1` ./gradlew assemble githubRelease
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
