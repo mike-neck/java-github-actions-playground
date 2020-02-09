@@ -11,13 +11,16 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: set up java
+        if: contains(github.ref, 'refs/tags/')
         uses: actions/setup-java@v1
         with:
           java-version: '13.0.2'
       - name: check out
+        if: contains(github.ref, 'refs/tags/')
         uses: actions/checkout@v2
   
       - name: cache gradle modules
+        if: contains(github.ref, 'refs/tags/')
         uses: actions/cache@v1
         env:
           cache-name: gradle-modules
@@ -27,10 +30,15 @@ jobs:
           restore-keys:
             ${{ runner.os }}-gradle-
 
+      - name: show current branch
+        run: git branch
+
       - name: fetch all tags
+        if: contains(github.ref, 'refs/tags/')
         run: git fetch --depth=1 origin +refs/tags/*:refs/tags/*
 
       - name: git tag
+        if: contains(github.ref, 'refs/tags/')
         run: git tag --list
 
       -
@@ -49,6 +57,7 @@ jobs:
 
 
       - name: verify release
+        if: contains(github.ref, 'refs/tags/')
         run: ORG_GRADLE_PROJECT_project_version=`echo $EVENT_REF | tr '/' ' ' | awk '{print $3}'` ./gradlew showVersion verifyRelease
         env:
           EVENT_REF: ${{ github.ref }}
@@ -59,9 +68,17 @@ jobs:
       - name: show event
         run: cat $GITHUB_EVENT_PATH
 
-      - name: release
+      - name: release to project release
+        if: contains(github.ref, 'refs/tags/')
         run: ORG_GRADLE_PROJECT_project_version=`echo $EVENT_REF | tr '/' ' ' | awk '{print $3}'` ./gradlew assemble githubRelease
         env:
           EVENT_REF: ${{ github.ref }}
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
+      - name: release to github packages
+        if: contains(github.ref, 'refs/tags/')
+        run: ORG_GRADLE_PROJECT_project_version=`echo $EVENT_REF | tr '/' ' ' | awk '{print $3}'` ./gradlew assemble publishGithubPublicationToGithubPackagesRepository
+        env:
+          EVENT_REF: ${{ github.ref }}
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          ORG_GRADLE_PROJECT_github_user: ${{ github.event.repository.owner.login }}
