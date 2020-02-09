@@ -10,24 +10,49 @@ on:
       - review_requested
 
 jobs:
+  pretty-json:
+    runs-on: ubuntu-latest
+    steps:
+      - name: download pretty-json
+        run: curl -L -O https://github.com/mike-neck/pretty-json/releases/download/v0.0.1/cj_0.0.1_Linux_x86_64.tar.gz
+      - name: tar pretty-json
+        run: tar zxvf cj_0.0.1_Linux_x86_64.tar.gz
+      - name: share pretty-json
+        uses: actions/upload-artifact@v1
+        with:
+          name: pretty-json
+          path: pretty-json
+
   foo:
     name: foo
     runs-on: ubuntu-latest
     steps:
       - name: show foo
         run: echo foo
+      - name: share pretty-json
+        uses: actions/download-artifact@v1
+        with:
+          name: pretty-json
+          path: pretty-json
+      - name: add +x
+        run: chmod +x pretty-json
       - name: show env
         env:
           ENV_CTX: ${{ toJson(env) }}
-        run: echo $ENV_CTX
+        run: echo $ENV_CTX | ./pretty-json
   bar:
     name: bar
     runs-on: ubuntu-latest
     steps:
       - name: show bar
         run: echo bar
-      - name: test jq
-        run: echo '{"ref":"foo/bar/baz","sha":"a1c"}' | jq
+      - name: share pretty-json
+        uses: actions/download-artifact@v1
+        with:
+          name: pretty-json
+          path: pretty-json
+      - name: add +x
+        run: chmod +x pretty-json
       - name: show github no pretty
         env:
           GHC: ${{ toJson(github) }}
@@ -35,14 +60,21 @@ jobs:
       - name: show github
         env:
           GHC: ${{ toJson(github) }}
-        run: echo '$GHC' | jq
+        run: echo '$GHC' | ./pretty-json
   baz:
     name: baz
     runs-on: ubuntu-latest
     steps:
       - name: show baz
         run: echo baz
+      - name: share pretty-json
+        uses: actions/download-artifact@v1
+        with:
+          name: pretty-json
+          path: pretty-json
+      - name: add +x
+        run: chmod +x pretty-json
       - name: show job
         env:
           JOB_CTX: ${{ toJson(job) }}
-        run: echo $JOB_CTX
+        run: echo $JOB_CTX | ./pretty-json
