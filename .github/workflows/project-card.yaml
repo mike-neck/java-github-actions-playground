@@ -15,5 +15,5 @@ jobs:
     steps:
       - name: show project github event
         env:
-          GHC: ${{ github.event }}
+          GHC: ${{ github }}
         run: echo $GHC
