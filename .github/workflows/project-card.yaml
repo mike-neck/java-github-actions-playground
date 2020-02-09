@@ -1,0 +1,19 @@
+name: project card event hooks
+
+on:
+  project_card:
+    types:
+      - created
+      - moved
+      - converted
+      - edited
+      - deleted
+
+jobs:
+  show-project-events:
+    runs-on: ubuntu-latest
+    steps:
+      - name: show project github event
+        env:
+          GHC: ${{ github.event }}
+        run: echo $GHC
