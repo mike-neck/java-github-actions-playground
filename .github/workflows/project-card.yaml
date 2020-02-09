@@ -17,4 +17,4 @@ jobs:
       - name: show project github event
         env:
           GHC: ${{ toJson(github) }}
-        run: echo $GHC
+        run: echo "$GHC"
