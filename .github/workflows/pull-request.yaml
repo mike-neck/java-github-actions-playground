@@ -26,10 +26,16 @@ jobs:
     steps:
       - name: show bar
         run: echo bar
+      - name: test jq
+        run: echo '{"ref":"foo/bar/baz","sha":"a1c"}' | jq
+      - name: show github no pretty
+        env:
+          GHC: ${{ toJson(github) }}
+        run: echo '$GHC'
       - name: show github
         env:
           GHC: ${{ toJson(github) }}
-        run: echo $GHC | jq -M
+        run: echo '$GHC' | jq
   baz:
     name: baz
     runs-on: ubuntu-latest
