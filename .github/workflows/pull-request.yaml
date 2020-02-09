@@ -24,6 +24,7 @@ jobs:
   bar:
     name: bar
     runs-on: ubuntu-latest
+    needs: foo
     steps:
       - name: show bar
         run: echo bar
@@ -31,9 +32,19 @@ jobs:
         env:
           GHC: ${{ toJson(github) }}
         run: echo "$GHC"
+      - name: store github to file
+        env:
+          GHC: ${{ toJson(github) }}
+        run: echo "$GHC" > github.json
+      - name: upload github as archive
+        uses: actions/upload-artifact@v1
+          with:
+            path: github.json
+            name: github.json
   baz:
     name: baz
     runs-on: ubuntu-latest
+    needs: bar
     steps:
       - name: show baz
         run: echo baz
