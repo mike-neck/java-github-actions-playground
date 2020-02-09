@@ -30,6 +30,9 @@ jobs:
           restore-keys:
             ${{ runner.os }}-gradle-
 
+      - name: show current branch
+        run: git branch
+
       - name: fetch all tags
         if: contains(github.ref, 'refs/tags/')
         run: git fetch --depth=1 origin +refs/tags/*:refs/tags/*
