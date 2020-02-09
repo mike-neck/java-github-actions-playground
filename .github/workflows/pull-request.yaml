@@ -38,9 +38,9 @@ jobs:
         run: echo "$GHC" > github.json
       - name: upload github as archive
         uses: actions/upload-artifact@v1
-          with:
-            path: github.json
-            name: github.json
+        with:
+          path: github.json
+          name: github.json
   baz:
     name: baz
     runs-on: ubuntu-latest
