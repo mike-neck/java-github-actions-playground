@@ -2,7 +2,13 @@ name: project event hooks
 
 on:
   project:
-    types: [created,updated,closed,reopened,edited,deleted]
+    types: 
+      - created
+      - updated
+      - closed
+      - reopened
+      - edited
+      - deleted
 
 jobs:
   show_project_events:
@@ -11,5 +17,5 @@ jobs:
     steps:
       - name: show project github event
         env:
-          GHC: ${{ github }}
+          GHC: ${{ toJson(github) }}
         run: echo $GHC

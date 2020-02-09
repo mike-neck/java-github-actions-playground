@@ -2,7 +2,12 @@ name: project card event hooks
 
 on:
   project_card:
-    types: [created, moved, converted, edited, deleted]
+    types: 
+      - created
+      - moved
+      - converted
+      - edited
+      - deleted
 
 jobs:
   show_project_card_events:
@@ -11,5 +16,5 @@ jobs:
     steps:
       - name: show project github event
         env:
-          GHC: ${{ github }}
+          GHC: ${{ toJson(github) }}
         run: echo $GHC
