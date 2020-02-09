@@ -10,7 +10,8 @@ on:
       - deleted
 
 jobs:
-  show-project-events:
+  show-project-card-events:
+    name: show project card event
     runs-on: ubuntu-latest
     steps:
       - name: show project github event

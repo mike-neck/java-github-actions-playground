@@ -12,6 +12,7 @@ on:
 
 jobs:
   show-project-events:
+    name: show project event
     runs-on: ubuntu-latest
     steps:
       - name: show project github event
