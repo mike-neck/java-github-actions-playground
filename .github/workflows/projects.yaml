@@ -1,0 +1,20 @@
+name: project event hooks
+
+on:
+  project:
+    types:
+      - created
+      - updated
+      - closed
+      - reopened
+      - edited
+      - deleted
+
+jobs:
+  show-project-events:
+    runs-on: ubuntu-latest
+    steps:
+      - name: show project github event
+        env:
+          GHC: ${{ github.event }}
+        run: echo $GHC
