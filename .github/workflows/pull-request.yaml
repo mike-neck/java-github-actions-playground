@@ -34,7 +34,7 @@ jobs:
         uses: actions/download-artifact@v1
         with:
           name: pretty-json
-          path: pretty-json
+          path: ./
       - name: show directory
         run: ls -la
       - name: add +x
@@ -54,7 +54,7 @@ jobs:
         uses: actions/download-artifact@v1
         with:
           name: pretty-json
-          path: pretty-json
+          path: ./
       - name: show directory
         run: ls -la
       - name: add +x
@@ -78,7 +78,7 @@ jobs:
         uses: actions/download-artifact@v1
         with:
           name: pretty-json
-          path: pretty-json
+          path: ./
       - name: show directory
         run: ls -la
       - name: add +x
