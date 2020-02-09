@@ -42,7 +42,7 @@ jobs:
       - name: show env
         env:
           ENV_CTX: ${{ toJson(env) }}
-        run: echo $ENV_CTX | ./pretty-json
+        run: echo "$ENV_CTX" | ./pretty-json
   bar:
     name: bar
     runs-on: ubuntu-latest
@@ -62,11 +62,11 @@ jobs:
       - name: show github no pretty
         env:
           GHC: ${{ toJson(github) }}
-        run: echo '$GHC'
+        run: echo "$GHC"
       - name: show github
         env:
           GHC: ${{ toJson(github) }}
-        run: echo '$GHC' | ./pretty-json
+        run: echo "$GHC" | ./pretty-json
   baz:
     name: baz
     runs-on: ubuntu-latest
@@ -86,4 +86,4 @@ jobs:
       - name: show job
         env:
           JOB_CTX: ${{ toJson(job) }}
-        run: echo $JOB_CTX | ./pretty-json
+        run: echo "$JOB_CTX" | ./pretty-json
