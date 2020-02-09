@@ -68,6 +68,6 @@ jobs:
             ${{ github.workflow }}
             ===
             
-            - ${{ github.sha }}
-            - ${{ github.event.name }}
+            - ${{ github.event.pull_request.head.sha }}
+            - ${{ github.event_name }}
             - ${{ github.event.action }}
