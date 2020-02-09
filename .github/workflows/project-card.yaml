@@ -2,15 +2,10 @@ name: project card event hooks
 
 on:
   project_card:
-    types:
-      - created
-      - moved
-      - converted
-      - edited
-      - deleted
+    types: [created, moved, converted, edited, deleted]
 
 jobs:
-  show-project-card-events:
+  show_project_card_events:
     name: show project card event
     runs-on: ubuntu-latest
     steps:

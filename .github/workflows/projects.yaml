@@ -2,16 +2,10 @@ name: project event hooks
 
 on:
   project:
-    types:
-      - created
-      - updated
-      - closed
-      - reopened
-      - edited
-      - deleted
+    types: [created,updated,closed,reopened,edited,deleted]
 
 jobs:
-  show-project-events:
+  show_project_events:
     name: show project event
     runs-on: ubuntu-latest
     steps:
