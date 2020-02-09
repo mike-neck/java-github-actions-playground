@@ -1,0 +1,4 @@
+Release v0.0.4
+---
+
+* auto upload to github packages
