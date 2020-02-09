@@ -1,11 +1,17 @@
 plugins {
     id 'java-library'
+    id 'maven-publish'
+    id 'signing'
     id "com.github.breadmoirai.github-release" version "2.2.9"
 }
 
 ext {
     projectVersion = project.hasProperty('project_version') ?
             "${project.property('project_version')}".trim() : './get-git-version.sh'.execute().text.trim()
+
+    githubUser = project.hasProperty('github_user') ?
+            "${project.property('github_user')}".trim() : ''
+    githubToken = "${System.getenv('GITHUB_TOKEN')}"
 }
 
 version = projectVersion
@@ -28,9 +34,7 @@ test {
 
 
 githubRelease {
-    token {
-        System.getenv('GITHUB_TOKEN')
-    }
+    token githubToken
     owner 'mike-neck'
     repo project.name
     tagName projectVersion
@@ -59,5 +63,48 @@ task verifyRelease(group: 'release') {
         if(!file("release-notes/${projectVersion}.txt").exists()) {
             throw new IllegalStateException("Release notes(release-notes/${projectVersion}.txt) is not existing. Please prepare release notes.")
         }
+    }
+}
+
+java {
+    withJavadocJar()
+    withSourcesJar()
+}
+
+publishing {
+    repositories {
+        maven {
+            name = 'GithubPackages'
+            url 'https://maven.pkg.github.com/mike-neck/java-github-actions-playground'
+            credentials {
+                username = githubUser
+                password = githubToken
+            }
+        }
+    }
+    publications {
+        github(MavenPublication) {
+            from(components.java)
+            pom {
+                name = 'java-github-actions-playground'
+                description = 'java github actions example'
+                url = 'https://github.com/mike-neck/java-github-actions-playground'
+                scm {
+                    connection = 'scm:git:git://github.com/mike-neck/java-github-actions-playground.git'
+                    developerConnection = 'scm:git:git://github.com/mike-neck/java-github-actions-playground.git'
+                    url = 'https://github.com/mike-neck/java-github-actions-playground'
+                }
+            }
+        }
+    }
+}
+
+signing {
+    sign publishing.publications.github
+}
+
+javadoc {
+    if(JavaVersion.current().isJava9Compatible()) {
+        options.addBooleanOption('html5', true)
     }
 }
