@@ -59,13 +59,15 @@ jobs:
     needs: baz
     steps:
       - name: create comment
-        env:
-          TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          COMMENT_URI: ${{ github.event.pull_request._links.comments.href }}
-          COMMIT: ${{ github.sha }}
-          FLOW: ${{ github.workflow }}
-          EVENT_NAME: ${{ github.event_name }}
-          EVENT_ACTION: ${{ github.event.action }}
-        run: |
-          curl -i -X POST "$COMMENT_URI" -H 'Authorization: Bearer $TOKEN' \
-              --data '{"body":"${COMMIT}\n---\n\n* flow - $FLOW\n* event - $EVENT_NAME\n* action: $EVENT_ACTION"}'
+        uses: peter-evans/create-or-update-comment@v1
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          issue-number: ${{ github.event.number }}
+          reaction-type: "+1"
+          body: |
+            ${{ github.workflow }}
+            ===
+            
+            - ${{ github.sha }}
+            - ${{ github.event.name }}
+            - ${{ github.event.action }}
