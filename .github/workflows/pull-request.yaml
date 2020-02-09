@@ -35,6 +35,8 @@ jobs:
         with:
           name: pretty-json
           path: pretty-json
+      - name: show directory
+        run: ls -la
       - name: add +x
         run: chmod +x pretty-json
       - name: show env
@@ -53,6 +55,8 @@ jobs:
         with:
           name: pretty-json
           path: pretty-json
+      - name: show directory
+        run: ls -la
       - name: add +x
         run: chmod +x pretty-json
       - name: show github no pretty
@@ -75,6 +79,8 @@ jobs:
         with:
           name: pretty-json
           path: pretty-json
+      - name: show directory
+        run: ls -la
       - name: add +x
         run: chmod +x pretty-json
       - name: show job
