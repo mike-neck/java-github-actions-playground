@@ -60,19 +60,21 @@ jobs:
         name: test
         run: ./gradlew test
         env:
-          ORG_GRADLE_PROJECT_dynamoDbHost: dynamodb
+          ORG_GRADLE_PROJECT_dynamoDbHost: ${{ 'dynamodb' }}
+          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          AWS_SECRET_KEY: ${{ secrets.AWS_SECRET_KEY }}
 
       -
         name: store test reports
         uses: actions/upload-artifact@v1
-        if: failure()
+        if: always()
         with:
           name: main-test-report
           path: build/reports
       -
         name: store buildSrc test reports
         uses: actions/upload-artifact@v1
-        if: failure()
+        if: always()
         with:
           name: buildSrc-test-report
           path: buildSrc/build/reports
