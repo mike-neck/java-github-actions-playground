@@ -15,6 +15,8 @@
  */
 package com.example.gradle
 
+import com.example.gradle.aws.CredentialConfig
+import com.example.gradle.aws.EndpointConfig
 import com.example.gradle.db.DynamoDbCreateTable
 import org.gradle.api.DefaultTask
 import org.gradle.api.Project
