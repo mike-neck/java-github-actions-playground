@@ -17,10 +17,21 @@ package com.example.gradle.db
 
 import com.amazonaws.services.dynamodbv2.AmazonDynamoDB
 import com.amazonaws.services.dynamodbv2.AmazonDynamoDBClientBuilder
-import com.amazonaws.services.dynamodbv2.model.*
-import com.example.gradle.*
+import com.amazonaws.services.dynamodbv2.model.AttributeDefinition
+import com.amazonaws.services.dynamodbv2.model.CreateTableRequest
+import com.amazonaws.services.dynamodbv2.model.KeySchemaElement
+import com.amazonaws.services.dynamodbv2.model.KeyType
+import com.amazonaws.services.dynamodbv2.model.ProvisionedThroughput
+import com.amazonaws.services.dynamodbv2.model.ResourceInUseException
+import com.amazonaws.services.dynamodbv2.model.ScalarAttributeType
+import com.example.gradle.DataDefinition
+import com.example.gradle.DataDefinitionProvider
+import com.example.gradle.DataType
+import com.example.gradle.Either
+import com.example.gradle.IdentifierType
 import com.example.gradle.aws.CredentialConfig
 import com.example.gradle.aws.EndpointConfig
+import com.example.gradle.rescueFlat
 
 class DynamoDbCreateTable(
     private val client: AmazonDynamoDB,
