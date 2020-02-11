@@ -78,12 +78,12 @@ class DynamoDbCreateTableTest {
             .appendFraction(ChronoField.NANO_OF_SECOND, 0, 9, true)
             .toFormatter()
 
+    private val dynamoDbHost = System.getenv("DYNAMO_DB").let { if (it.isNullOrBlank()) "localhost" else it }
+
     fun client(): AmazonDynamoDB =
         AmazonDynamoDBClientBuilder.standard()
-            .withEndpointConfiguration(AwsClientBuilder.EndpointConfiguration("http://localhost:8000", "ap-northeast-1"))
+            .withEndpointConfiguration(AwsClientBuilder.EndpointConfiguration("http://$dynamoDbHost:8000", "ap-northeast-1"))
             .withCredentials(DefaultAWSCredentialsProviderChain())
             .build()
-
-
   }
 }

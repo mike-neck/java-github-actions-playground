@@ -61,6 +61,7 @@ jobs:
         run: ORG_GRADLE_PROJECT_project_version=`echo $EVENT_REF | tr '/' ' ' | awk '{print $3}'` ./gradlew showVersion verifyRelease
         env:
           EVENT_REF: ${{ github.ref }}
+          ORG_GRADLE_PROJECT_skipBuildSrcTest: true
 
       - name: show env
         run: env | sort
@@ -74,6 +75,7 @@ jobs:
         env:
           EVENT_REF: ${{ github.ref }}
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          ORG_GRADLE_PROJECT_skipBuildSrcTest: true
 
       - name: release to github packages
         if: contains(github.ref, 'refs/tags/')
@@ -82,3 +84,4 @@ jobs:
           EVENT_REF: ${{ github.ref }}
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           ORG_GRADLE_PROJECT_github_user: ${{ github.event.repository.owner.login }}
+          ORG_GRADLE_PROJECT_skipBuildSrcTest: true
