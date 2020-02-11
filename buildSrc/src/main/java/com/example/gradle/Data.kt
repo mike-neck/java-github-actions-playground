@@ -59,29 +59,41 @@ interface NoMatchesOp<V: Any> {
 //////////////////////
 
 interface DataDefinitionProvider {
+  fun tableName(prefix: String?): String
   fun definition(): List<DataDefinition>
 }
 
 ////
 
 interface DataDefinition {
-  val identifier: Boolean
+  val identifier: IdentifierType
   val name: String
   val type: DataType
 
+  fun canBeIdentity(): Boolean = identifier != IdentifierType.NONE
 
   companion object {
 
-    data class Default(override val identifier: Boolean, override val name: String, override val type: DataType): DataDefinition
+    data class Default(override val identifier: IdentifierType, override val name: String, override val type: DataType): DataDefinition
 
-    fun string(name: String): DataDefinition = Default(false, name, DataType.STRING)
-    fun int(name: String): DataDefinition = Default(false, name, DataType.INT)
-    fun long(name: String): DataDefinition = Default(false, name, DataType.LONG)
+    fun string(name: String): DataDefinition = Default(IdentifierType.NONE, name, DataType.STRING)
+    fun int(name: String): DataDefinition = Default(IdentifierType.NONE, name, DataType.INT)
+    fun long(name: String): DataDefinition = Default(IdentifierType.NONE, name, DataType.LONG)
 
-    fun identifierString(name: String): DataDefinition = Default(true, name, DataType.STRING)
-    fun identifierInt(name: String): DataDefinition = Default(true, name, DataType.INT)
-    fun identifierLong(name: String): DataDefinition = Default(true, name, DataType.LONG)
+    fun identifierHashableString(name: String): DataDefinition = Default(IdentifierType.HASHABLE, name, DataType.STRING)
+    fun identifierHashableInt(name: String): DataDefinition = Default(IdentifierType.HASHABLE, name, DataType.INT)
+    fun identifierHashableLong(name: String): DataDefinition = Default(IdentifierType.HASHABLE, name, DataType.LONG)
+
+    fun identifierContinuousString(name: String): DataDefinition = Default(IdentifierType.CONTINUOUS, name, DataType.STRING)
+    fun identifierContinuousInt(name: String): DataDefinition = Default(IdentifierType.CONTINUOUS, name, DataType.INT)
+    fun identifierContinuousLong(name: String): DataDefinition = Default(IdentifierType.CONTINUOUS, name, DataType.LONG)
   }
+}
+
+enum class IdentifierType {
+  NONE,
+  HASHABLE,
+  CONTINUOUS,
 }
 
 enum class DataType {

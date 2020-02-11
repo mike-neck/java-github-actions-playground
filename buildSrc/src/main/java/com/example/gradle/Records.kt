@@ -42,9 +42,13 @@ data class Scrum(val id: Long, val start: LocalDate, val end: LocalDate, val tim
     const val endDay = "end_day"
     const val tz = "time_zone"
 
+    override fun tableName(prefix: String?): String =
+        if (prefix == null) "scrum"
+        else "${prefix}.scrum"
+
     override fun definition(): List<DataDefinition> {
       return listOf(
-          DataDefinition.identifierLong(scrumId),
+          DataDefinition.identifierHashableLong(scrumId),
           DataDefinition.string(startDay),
           DataDefinition.string(endDay),
           DataDefinition.string(tz)
@@ -71,13 +75,16 @@ data class StoryPoint(val sum: Int, val finished: Int, val date: LocalDate, val 
     const val fin = "finished"
     const val tz = "time_zone"
 
+    override fun tableName(prefix: String?): String =
+        if (prefix == null) "story_points"
+        else "${prefix}.story_points"
+
     override fun definition(): List<DataDefinition> =
         listOf(
-            DataDefinition.identifierString(d),
+            DataDefinition.identifierHashableString(d),
             DataDefinition.int(s),
             DataDefinition.int(fin),
             DataDefinition.string(tz)
         )
   }
 }
-
