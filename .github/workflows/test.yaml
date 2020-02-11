@@ -61,3 +61,18 @@ jobs:
         run: ./gradlew test
         env:
           ORG_GRADLE_PROJECT_dynamoDbHost: dynamodb
+
+      -
+        name: store test reports
+        uses: actions/upload-artifact@v1
+        if: failure()
+        with:
+          name: main-test-report
+          path: build/reports
+      -
+        name: store buildSrc test reports
+        uses: actions/upload-artifact@v1
+        if: failure()
+        with:
+          name: buildSrc-test-report
+          path: buildSrc/build/reports
