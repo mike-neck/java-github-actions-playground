@@ -16,6 +16,7 @@
 package com.example.gradle.db
 
 import com.amazonaws.services.dynamodbv2.AmazonDynamoDB
+import com.amazonaws.services.dynamodbv2.AmazonDynamoDBClientBuilder
 import com.amazonaws.services.dynamodbv2.model.*
 import com.example.gradle.*
 
@@ -35,7 +36,16 @@ class DynamoDbCreateTable(
           }
           .throwError { IllegalStateException("failed to create table(${definition.tableName(prefix)})", it) }
 
+  fun createTables(vararg definitions: DataDefinitionProvider): List<String> = definitions.map { createTable(it) }
+
   companion object {
+
+    operator fun invoke(credentialConfig: CredentialConfig, endpointConfig: EndpointConfig, prefix: String?): DynamoDbCreateTable =
+        listOf(credentialConfig, endpointConfig)
+            .fold(AmazonDynamoDBClientBuilder.standard()) { builder, config ->
+              config.configure(builder)
+            }.build()
+            .let { DynamoDbCreateTable(it, prefix) }
 
     private val <T : Any> Result<T>.asEither: Either<Throwable, T> get() = this.fold(onSuccess = { Either.right(it) }, onFailure = { Either.left(it) })
 
