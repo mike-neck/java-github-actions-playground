@@ -24,11 +24,7 @@ import com.amazonaws.services.dynamodbv2.model.KeyType
 import com.amazonaws.services.dynamodbv2.model.ProvisionedThroughput
 import com.amazonaws.services.dynamodbv2.model.ResourceInUseException
 import com.amazonaws.services.dynamodbv2.model.ScalarAttributeType
-import com.example.gradle.DataDefinition
-import com.example.gradle.DataDefinitionProvider
-import com.example.gradle.DataType
 import com.example.gradle.Either
-import com.example.gradle.IdentifierType
 import com.example.gradle.aws.CredentialConfig
 import com.example.gradle.aws.EndpointConfig
 import com.example.gradle.rescueFlat
@@ -38,7 +34,7 @@ class DynamoDbCreateTable(
     private val prefix: String?
 ) {
 
-  fun createTable(definition: DataDefinitionProvider): String =
+  fun createTable(definition: DataDefinitionProvider<*>): String =
       runCatching { client.createTable(definition.toRequest(prefix)).tableDescription.tableName }
           .asEither
           .rescueFlat {
@@ -49,7 +45,7 @@ class DynamoDbCreateTable(
           }
           .throwError { IllegalStateException("failed to create table(${definition.tableName(prefix)})", it) }
 
-  fun createTables(vararg definitions: DataDefinitionProvider): List<String> = definitions.map { createTable(it) }
+  fun createTables(vararg definitions: DataDefinitionProvider<*>): List<String> = definitions.map { createTable(it) }
 
   companion object {
 
@@ -59,10 +55,8 @@ class DynamoDbCreateTable(
               config.configure(builder)
             }.build()
             .let { DynamoDbCreateTable(it, prefix) }
-
-    private val <T : Any> Result<T>.asEither: Either<Throwable, T> get() = this.fold(onSuccess = { Either.right(it) }, onFailure = { Either.left(it) })
-
-    fun DataDefinitionProvider.toRequest(prefix: String?): CreateTableRequest =
+    
+    fun <T: Records> DataDefinitionProvider<T>.toRequest(prefix: String?): CreateTableRequest =
         this.definition()
             .let { def ->
               CreateTableRequest(this.tableName(prefix), def.filter { it.canBeIdentity() }.map { KeySchemaElement(it.name, it.identifier.type) })
@@ -86,3 +80,5 @@ class DynamoDbCreateTable(
 
   }
 }
+
+val <T : Any> Result<T>.asEither: Either<Throwable, T> get() = this.fold(onSuccess = { Either.right(it) }, onFailure = { Either.left(it) })

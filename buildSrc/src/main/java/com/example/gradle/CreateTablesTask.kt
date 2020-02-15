@@ -18,14 +18,15 @@ package com.example.gradle
 import com.example.gradle.aws.CredentialConfig
 import com.example.gradle.aws.EndpointConfig
 import com.example.gradle.db.DynamoDbCreateTable
+import com.example.gradle.db.Scrum
+import com.example.gradle.db.StoryPoint
 import org.gradle.api.DefaultTask
 import org.gradle.api.Project
 import org.gradle.api.provider.Property
 import org.gradle.api.tasks.TaskAction
-import javax.inject.Inject
 import kotlin.reflect.KClass
 
-class CreateTablesTask @Inject constructor(project: Project) : DefaultTask() {
+class CreateTablesTask: DefaultTask() {
 
   val awsAccessKey: Property<String>
   val awsSecretKey: Property<String>

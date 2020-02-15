@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.example.gradle
+package com.example.gradle.db
 
 //////////////////////
 //////////////////////
@@ -50,15 +50,15 @@ interface IntDataOp<V: Any> {
 }
 
 interface NoMatchesOp<V: Any> {
-  fun others(valueProvider: () -> V): V
-  fun throwError(exception: () -> Exception): V
-  fun orNull(): V?
+  fun others(valueProvider: () -> V): Pair<String, V>
+  fun throwError(exception: () -> Exception): Pair<String, V>
+  fun orNull(): Pair<String, V>?
 }
 
 //////////////////////
 //////////////////////
 
-interface DataDefinitionProvider {
+interface DataDefinitionProvider<T: Records> {
   fun tableName(prefix: String?): String
   fun definition(): List<DataDefinition>
 }

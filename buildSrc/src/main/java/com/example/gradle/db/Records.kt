@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.example.gradle
+package com.example.gradle.db
 
 import java.time.LocalDate
 import java.time.ZoneId
@@ -36,7 +36,7 @@ data class Scrum(val id: Long, val start: LocalDate, val end: LocalDate, val tim
       dataFactory.string(tz, timeZone.id)
   )
 
-  companion object: DataDefinitionProvider {
+  companion object: DataDefinitionProvider<Scrum> {
     const val scrumId = "scrum_id"
     const val startDay = "start_day"
     const val endDay = "end_day"
@@ -69,7 +69,7 @@ data class StoryPoint(val sum: Int, val finished: Int, val date: LocalDate, val 
           dataFactory.string(tz, timeZone.id)
       )
 
-  companion object: DataDefinitionProvider {
+  companion object: DataDefinitionProvider<StoryPoint> {
     const val d = "date"
     const val s = "sum"
     const val fin = "finished"
