@@ -26,7 +26,7 @@ import org.gradle.api.provider.Property
 import org.gradle.api.tasks.TaskAction
 import kotlin.reflect.KClass
 
-class CreateTablesTask: DefaultTask() {
+class CreateTablesTask : DefaultTask() {
 
   val awsAccessKey: Property<String>
   val awsSecretKey: Property<String>
@@ -43,17 +43,13 @@ class CreateTablesTask: DefaultTask() {
   }
 
   @TaskAction
-  fun exec() {
-    val creator = DynamoDbCreateTable(
-        CredentialConfig(awsAccessKey, awsSecretKey, profile),
-        EndpointConfig(endpoint),
-        tableNamePrefix.orNull)
-    val tables = creator.createTables(Scrum, StoryPoint)
-
-    tables.forEach { logger.lifecycle("created {} table", it) }
-  }
-
-  companion object {
-    inline fun <reified T : Any> Project.prop(klass: KClass<T> = T::class): Property<T> = this.objects.property(klass.java)
-  }
+  fun exec() =
+      DynamoDbCreateTable(
+          CredentialConfig(awsAccessKey, awsSecretKey, profile),
+          EndpointConfig(endpoint),
+          tableNamePrefix.orNull)
+          .createTables(Scrum, StoryPoint)
+          .forEach { logger.lifecycle("created {} table", it) }
 }
+
+inline fun <reified T : Any> Project.prop(klass: KClass<T> = T::class): Property<T> = this.objects.property(klass.java)

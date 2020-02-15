@@ -25,6 +25,7 @@ import com.amazonaws.services.dynamodbv2.model.ProvisionedThroughput
 import com.amazonaws.services.dynamodbv2.model.ResourceInUseException
 import com.amazonaws.services.dynamodbv2.model.ScalarAttributeType
 import com.example.gradle.Either
+import com.example.gradle.aws.AwsDynamoDbClientConfig
 import com.example.gradle.aws.CredentialConfig
 import com.example.gradle.aws.EndpointConfig
 import com.example.gradle.rescueFlat
@@ -50,11 +51,7 @@ class DynamoDbCreateTable(
   companion object {
 
     operator fun invoke(credentialConfig: CredentialConfig, endpointConfig: EndpointConfig, prefix: String?): DynamoDbCreateTable =
-        listOf(credentialConfig, endpointConfig)
-            .fold(AmazonDynamoDBClientBuilder.standard()) { builder, config ->
-              config.configure(builder)
-            }.build()
-            .let { DynamoDbCreateTable(it, prefix) }
+        DynamoDbCreateTable(listOf(credentialConfig, endpointConfig).buildClient(), prefix)
     
     fun <T: Records> DataDefinitionProvider<T>.toRequest(prefix: String?): CreateTableRequest =
         this.definition()
@@ -82,3 +79,8 @@ class DynamoDbCreateTable(
 }
 
 val <T : Any> Result<T>.asEither: Either<Throwable, T> get() = this.fold(onSuccess = { Either.right(it) }, onFailure = { Either.left(it) })
+
+fun List<AwsDynamoDbClientConfig>.buildClient(): AmazonDynamoDB = this
+    .fold(AmazonDynamoDBClientBuilder.standard()) { builder, config ->
+      config.configure(builder)
+    }.build()

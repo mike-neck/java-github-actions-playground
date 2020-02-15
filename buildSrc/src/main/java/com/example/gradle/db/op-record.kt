@@ -18,6 +18,8 @@ package com.example.gradle.db
 import com.amazonaws.services.dynamodbv2.AmazonDynamoDB
 import com.amazonaws.services.dynamodbv2.model.AttributeValue
 import com.example.gradle.Either
+import com.example.gradle.aws.CredentialConfig
+import com.example.gradle.aws.EndpointConfig
 
 class DynamoDbInsert(
     private val client: AmazonDynamoDB,
@@ -41,6 +43,11 @@ class DynamoDbInsert(
           if (it.sdkHttpMetadata.httpStatusCode in 200..299) Either.right<String, T>(record)
           else Either.left("failed because response status is ${it.sdkHttpMetadata.httpStatusCode}")
         }
+  }
+
+  companion object {
+    operator fun invoke(credentialConfig: CredentialConfig, endpointConfig: EndpointConfig, prefix: String?): DynamoDbInsert =
+        DynamoDbInsert(listOf(credentialConfig, endpointConfig).buildClient(), prefix)
   }
 }
 
