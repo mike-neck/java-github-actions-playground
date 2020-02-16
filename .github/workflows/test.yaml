@@ -13,6 +13,12 @@ jobs:
     name: test
     runs-on: ubuntu-latest
 
+    services:
+      dynamodb:
+        image: "amazon/dynamodb-local:1.11.477"
+        ports:
+          - "8000:8000"
+
     steps:
       -
         name: set up java
@@ -39,10 +45,12 @@ jobs:
         env:
           GITHUB_CONTEXT: ${{ toJson(github) }}
         run: echo "$GITHUB_CONTEXT"
+
       - name: show job context
         env:
           JOB_CONTEXT: ${{ toJson(job) }}
         run: echo "$JOB_CONTEXT"
+
       - name: show steps context
         env:
           STEPS_CONTEXT: ${{ toJson(steps) }}
@@ -50,4 +58,23 @@ jobs:
 
       -
         name: test
-        run: ./gradlew test    
+        run: ./gradlew test
+        env:
+          ORG_GRADLE_PROJECT_dynamoDbHost: localhost
+          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          AWS_SECRET_KEY: ${{ secrets.AWS_SECRET_KEY }}
+
+      -
+        name: store test reports
+        uses: actions/upload-artifact@v1
+        if: always()
+        with:
+          name: main-test-report
+          path: build/reports
+      -
+        name: store buildSrc test reports
+        uses: actions/upload-artifact@v1
+        if: always()
+        with:
+          name: buildSrc-test-report
+          path: buildSrc/build/reports
