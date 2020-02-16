@@ -22,71 +22,60 @@ import com.example.gradle.db.StoryPoint
 import org.gradle.api.DefaultTask
 import org.gradle.api.Task
 import org.gradle.api.provider.Property
+import org.gradle.api.tasks.Input
 import org.gradle.api.tasks.TaskAction
 import java.time.ZoneId
+import javax.inject.Inject
 
-class NewStoryPointsTask : DefaultTask() {
+open class NewStoryPointsTask
+@Inject constructor(aws: Aws) : DefaultTask() {
 
+  @Input
   val awsAccessKey: Property<String>
+  @Input
   val awsSecretKey: Property<String>
+  @Input
   val profile: Property<String>
+  @Input
   val endpoint: Property<String>
+  @Input
   val tableNamePrefix: Property<String>
 
-  val onGoing: Property<Int>
+  @Input
+  val remaining: Property<Int>
+  @Input
   val finished: Property<Int>
+  @Input
   val date: Property<String>
+  @Input
   val timeZone: Property<String>
 
   init {
-    awsAccessKey = project.prop()
-    awsSecretKey = project.prop()
-    profile = project.prop()
-    endpoint = project.prop()
-    tableNamePrefix = project.prop()
+    awsAccessKey = aws._awsAccessKey
+    awsSecretKey = aws._awsSecretKey
+    profile = aws._profile
+    endpoint = aws._endpoint
+    tableNamePrefix = aws._tableNamePrefix
 
-    onGoing = project.prop()
+    remaining = project.prop()
     finished = project.prop()
     date = project.prop()
     timeZone = project.prop()
   }
 
-  interface OrLeft<T: Any> {
-    fun onNull(l: () -> String): Either<String, T>
-  }
+  fun setRemaining(value: Int): Unit = remaining.set(value)
 
-  private fun <T: Any> trying(r: () -> T?): OrLeft<T> =
-      when (val v = r()) {
-        null -> object : OrLeft<T> {
-          override fun onNull(l: () -> String): Either<String, T> = Either.left(l())
-        }
-        else -> object : OrLeft<T> {
-          override fun onNull(l: () -> String): Either<String, T> = Either.right(v)
-        }
-      }
+  fun setFinished(value: Int): Unit = finished.set(value)
 
-  private inline fun <reified T> listOf(list: List<T>, item: T): List<T> =
-      mutableListOf(*list.toTypedArray()).apply { this.add(item) }.toList()
+  fun setDate(date: String): Unit = this.date.set(date)
 
-  private fun <P1: Any, P2: Any> Either<List<String>, P1>.then(f: () -> Either<String, P2>): Either<List<String>, Pair<P1, P2>> =
-      when (this) {
-        is Right -> this.flatMap { p1 -> f().errorMap { listOf(it) }.map { p1 to it } }
-        is Left -> when (val e = f()) {
-          is Left<String, P2> -> Either.left(listOf(this.left, e.left))
-          else -> Either.left(this.left)
-        }
-        else -> throw IllegalStateException("invalid either type: $this")
-      }
-
-  private fun doing(): Either<List<String>, Unit> = Either.right(Unit)
-
-  private fun <T> Pair<Unit, T>.remove(): T = this.second
+  fun setTimeZone(tz: String): Unit = this.timeZone.set(tz)
 
   private val String.asZone: ZoneId get() = ZoneId.of(this)
 
   private fun storyPoint(): Either<List<String>, StoryPoint> =
       doing()
-          .then { trying { onGoing.orNull }.onNull { "lack of parameter [onGoing]" } }.map { it.remove() }
+          .then { trying { remaining.orNull }.onNull { "lack of parameter [remaining]" } }.map { it.remove() }
           .then { trying { finished.orNull }.onNull { "lack of parameter [finished]" } }
           .then { trying { date.orNull }.onNull { "lack of parameter [date](with format: yyyy-MM-dd)" } }
           .then { trying { timeZone.orNull }.onNull { "lack of parameter [timeZone]" } }
@@ -106,4 +95,4 @@ class NewStoryPointsTask : DefaultTask() {
       )
 }
 
-class TaskExecutionException(taskName: String, errors: List<String>): Exception("$taskName failed\n${errors.joinToString("\n- ", "- ")}")
+class TaskExecutionException(taskName: String, errors: List<String>) : Exception("$taskName failed\n${errors.joinToString("\n- ", "- ")}")

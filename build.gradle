@@ -2,6 +2,7 @@ plugins {
     id 'java-library'
     id 'maven-publish'
     id "com.github.breadmoirai.github-release" version "2.2.9"
+    id 'com.example.projectDynamoDbPlugin'
 }
 
 ext {
@@ -11,6 +12,9 @@ ext {
     githubUser = project.hasProperty('github_user') ?
             "${project.property('github_user')}".trim() : ''
     githubToken = "${System.getenv('GITHUB_TOKEN')}"
+
+    awsKey = "${System.getenv('AWS_ACCESS_KEY')}"
+    awsSecret = "${System.getenv('AWS_ACCESS_SECRET_KEY')}"
 }
 
 version = projectVersion
@@ -101,5 +105,30 @@ publishing {
 javadoc {
     if(JavaVersion.current().isJava9Compatible()) {
         options.addBooleanOption('html5', true)
+    }
+}
+
+aws {
+    awsAccessKey = awsKey
+    awsSecretKey = awsSecret
+    tableNamePrefix = System.getenv('BRANCH') == null? '':
+            System.getenv('BRANCH').split('/').last()
+}
+
+storyPoint {
+    setRemaining(10)
+    setFinished(15)
+}
+
+task showAws {
+    doLast {
+        println "awsKey: $awsKey (${awsKey == null})"
+        println "awsSecret: $awsSecret (${awsSecret == null})"
+        println 'aws'
+        aws.properties.findAll { it.key.startsWith('_') }.each {
+            println "  ${it}"
+        }
+        println "awsAccessKey: ${aws.awsAccessKey}"
+        println "storyPoint: ${storyPoint}"
     }
 }

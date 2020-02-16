@@ -23,23 +23,31 @@ import com.example.gradle.db.StoryPoint
 import org.gradle.api.DefaultTask
 import org.gradle.api.Project
 import org.gradle.api.provider.Property
+import org.gradle.api.tasks.Input
 import org.gradle.api.tasks.TaskAction
+import javax.inject.Inject
 import kotlin.reflect.KClass
 
-class CreateTablesTask : DefaultTask() {
+open class CreateTablesTask
+@Inject constructor(aws: Aws) : DefaultTask() {
 
+  @Input
   val awsAccessKey: Property<String>
+  @Input
   val awsSecretKey: Property<String>
+  @Input
   val profile: Property<String>
+  @Input
   val endpoint: Property<String>
+  @Input
   val tableNamePrefix: Property<String>
 
   init {
-    awsAccessKey = project.prop()
-    awsSecretKey = project.prop()
-    profile = project.prop()
-    endpoint = project.prop()
-    tableNamePrefix = project.prop()
+    awsAccessKey = aws._awsAccessKey
+    awsSecretKey = aws._awsSecretKey
+    profile = aws._profile
+    endpoint = aws._endpoint
+    tableNamePrefix = aws._tableNamePrefix
   }
 
   @TaskAction
